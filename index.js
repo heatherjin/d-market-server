@@ -1,5 +1,6 @@
 var http = require("http");
 // 내부IP, 내 컴퓨터 주소
+// 内部IP、マイコンピュータアドレス
 var hostname = "127.0.0.1";
 var port = 8080;
 
@@ -12,7 +13,7 @@ const server = http.createServer(function (req, res) {
       res.writeHead(200, { "Content-Type": "application/json" });
       const products = JSON.stringify([
         {
-          name: "농구공",
+          name: "basketball",
           price: 5000,
         },
       ]);

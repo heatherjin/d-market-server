@@ -1,5 +1,6 @@
 module.exports = function (sequelize, DataTypes) {
   //테이블명 'Product', 컬럼 정의
+  // テーブル名 'Product'、カラム定義
   const product = sequelize.define("Product", {
     name: {
       type: DataTypes.STRING(20),
@@ -25,6 +26,14 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.INTEGER(1),
       allowNull: false,
       defaultValue: 0,
+    },
+    password:{
+      type: DataTypes.STRING(20),
+      allowNull: false,
+    },
+    phone:{
+      type: DataTypes.STRING(20),
+      allowNull: false,      
     },
   });
   return product;
