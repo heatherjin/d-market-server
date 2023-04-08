@@ -13,6 +13,8 @@ upload = multer({
     },  
   }),
 });
+const detectProduct = require("./helpers/detectProduct");
+const product = require("./models/product");
 const port = 8080;
 
 // json형식의 데이터 처리할수 있도록 코드 작성
@@ -103,26 +105,29 @@ app.post("/products", (req, res) => {
     //防御コード
     res.status(400).send("すべてのフィールドを入力してください。");
   }
-
-  models.Product.create({
-    name,
-    description,
-    price,
-    seller,
-    imageUrl,
-    password,
-    phone,
-  })
-    .then((result) => {
-      console.log("商品生成結果 : ", result);
-      res.send({
-        result,
-      });
+  detectProduct(imageUrl, (type) => {
+    models.Product.create({
+      name,
+      description,
+      price,
+      seller,
+      imageUrl,
+      password,
+      phone,
+      type
     })
-    .catch((err) => {
-      console.error(err);
-      res.status(400).send("商品のアップロードに問題が発生しました。");
-    });
+      .then((result) => {
+        console.log("商品生成結果 : ", result);
+        res.send({
+          result,
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(400).send("商品のアップロードに問題が発生しました。");
+      });
+  }) 
+
 });
 
 app.get("/products/:id", (req, res) => {
@@ -242,6 +247,35 @@ app.post("/purchase/:id", (req, res) => {
     })
     .catch((err) => {
       console.error(err);
+      res.status(500).send("エラーが発生しました。");
+    });
+});
+
+
+app.get("/products/:id/recommendation", (req, res) => {
+  const { id } = req.params;
+  models.Product.findOne({
+    where: {
+      id,
+    },
+  })
+    .then((product) => {
+      const type = product.type;
+      models.Product.findAll({
+        where: {
+          type,
+          id: {
+            [models.Sequelize.Op.ne]: id,
+          },
+        },
+      }).then((products) => {
+        res.send({
+          products,
+        });
+      });
+    })
+    .catch((error) => {
+      console.error(error);
       res.status(500).send("エラーが発生しました。");
     });
 });
